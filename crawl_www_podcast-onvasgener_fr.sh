@@ -132,6 +132,8 @@ function parse_www_europe1_fr($page_url)
 
 function parse($base_url, $href, $regexp, $function)
 {
+  global $delay_us;
+
   $dom = new DOMDocument("1.0");
   @$dom->loadHTMLFile($base_url . $href);
   if ($dom == false)
