@@ -132,8 +132,6 @@ function parse_www_europe1_fr($page_url)
 
 function parse($base_url, $href, $regexp, $function)
 {
-  global $delay_us;
-
   $dom = new DOMDocument("1.0");
   @$dom->loadHTMLFile($base_url . $href);
   if ($dom == false)
@@ -156,11 +154,10 @@ function parse($base_url, $href, $regexp, $function)
                "['$regexp', '$text']\033[0m\n");
       }
 
+      usleep($delay_us);
       $function($base_url, $href, $matches[1]);
     }
   }
-
-  usleep($delay_us);
 }
 
 function parse_day($base_url, $href, $match)
