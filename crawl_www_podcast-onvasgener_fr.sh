@@ -31,7 +31,7 @@ $fixed_day_hrefs = array(
 => "https://www.europe1.fr/emissions/On-va-s-gener/On-va-s-gener-01-10-13-139008",
 "http://www.europe1.fr/MediaCenter/Emissions/On-va-s-gener/Sons/On-va-s-gener-02-10-13-1661163"
 => "https://www.europe1.fr/emissions/On-va-s-gener/On-va-s-gener-02-10-13-134528",
-"" // Very hacky, but works, as only one link is empty...
+"" // Very hacky, but works since only one link is empty...
 => "https://www.europe1.fr/emissions/On-va-s-gener/On-va-s-gener-30-11-12-105142",
 "hhttp://www.europe1.fr/MediaCenter/Emissions/On-va-s-gener/Sons/On-va-s-gener-29-03-10-165957/"
 => "http://www.europe1.fr/MediaCenter/Emissions/On-va-s-gener/Sons/On-va-s-gener-29-03-10-165957/"
@@ -132,6 +132,8 @@ function parse_www_europe1_fr($page_url)
 
 function parse($base_url, $href, $regexp, $function)
 {
+  global $delay_us;
+
   $dom = new DOMDocument("1.0");
   @$dom->loadHTMLFile($base_url . $href);
   if ($dom == false)
