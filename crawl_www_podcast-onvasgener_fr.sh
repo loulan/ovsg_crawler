@@ -10,7 +10,7 @@
  * It would probably have been more reliable.
  */
 
-$delay_us = 10000;
+$delay_us = 10000000;
 
 $root_url = "http://www.podcast-onvasgener.fr/";
 $ignored_day_hrefs = array(
