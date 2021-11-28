@@ -1,16 +1,9 @@
 #!/usr/bin/php
 <?php
 
-/*
- * This script uses http://www.podcast-onvasgener.fr/ to get a list of all
- * pages. I found out afterwards that I could just have used
- * https://www.europe1.fr/emissions/On-va-s-gener to
- * https://www.europe1.fr/emissions/On-va-s-gener/62.
- *
- * It would probably have been more reliable.
- */
+include("global.php");
 
-$delay_us = 10000000;
+$root_output_dir = "output_podcast-onvasgener";
 
 $root_url = "http://www.podcast-onvasgener.fr/";
 $ignored_day_hrefs = array(
@@ -58,84 +51,15 @@ $year = "XX";
 
 /******************************************************************************/
 
-function parse_www_europe1_fr($page_url)
-{
-  global $day, $month, $year;
-
-  $prefix = $year . $month . $day . "_";
-
-  echo "Page: " . $page_url . "\n";
-
-  $file_contents = @file_get_contents($page_url);
-  if ($file_contents == false)
-  {
-    fwrite(STDERR, "\033[01;33mWARNING: couldn't download the page " .
-                   "['$page_url']\033[0m\n");
-    return;
-  }
-  else
-  {
-    file_put_contents("output/www_europe1_fr/pages/" . $prefix
-                      . basename($page_url), $file_contents);
-  }
-
-  $dom = new DOMDocument("1.0");
-  @$dom->loadHTMLFile($page_url);
-  if ($dom == false)
-  {
-    fwrite(STDERR, "\033[01;33mWARNING: couldn't load the HTML file " .
-                   "['$page_url']\033[0m\n");
-    return;
-  }
-
-  $scripts = $dom->getElementsByTagName('script');
-  foreach ($scripts as $script)
-  {
-    if ($script->getAttribute("type") != "application/ld+json")
-    {
-      continue;
-    }
-
-    $script_json = json_decode($script->textContent, true);
-
-    if ($script_json["@type"] != "AudioObject")
-    {
-      continue;
-    }
-
-    $mp3_url = $script_json["contentUrl"];
-  }
-
-  if (!isset($mp3_url))
-  {
-    fwrite(STDERR, "\033[01;33mWARNING: couldn't find the URL of the " .
-                   "mp3\033[0m\n");
-    return;
-  }
-
-  echo "mp3: " . $mp3_url . "\n";
-
-  $file_contents = @file_get_contents($mp3_url);
-  if ($file_contents == false)
-  {
-    fwrite(STDERR, "\033[01;33mWARNING: couldn't download the mp3 " .
-                   "['$mp3_url']\033[0m\n");
-    touch("output/www_europe1_fr/mp3s/" . $prefix . "unavailable");
-    return;
-  }
-  else
-  {
-    file_put_contents("output/www_europe1_fr/mp3s/" . $prefix
-                      . basename($mp3_url), $file_contents);
-  }
-}
+include("parse_podcast_page.php");
+include("create_output_dirs.php");
 
 function parse($base_url, $href, $regexp, $function)
 {
   global $delay_us;
 
   $dom = new DOMDocument("1.0");
-  @$dom->loadHTMLFile($base_url . $href);
+  @$dom->loadHTMLFile("$base_url$href");
   if ($dom == false)
   {
     fwrite(STDERR, "\033[01;33mWARNING: couldn't load the HTML file "
@@ -143,21 +67,21 @@ function parse($base_url, $href, $regexp, $function)
     return;
   }
 
-  $anchors = $dom->getElementsByTagName("a");
-  foreach ($anchors as $element)
+  $as = $dom->getElementsByTagName("a");
+  foreach ($as as $a)
   {
-    $href = $element->getAttribute('href');
-    $text = $element->textContent;
+    $href = $a->getAttribute("href");
+    $text = $a->textContent;
     if (preg_match($regexp, $text, $matches))
     {
       if (($num_matches = count($matches)) > 2)
       {
-        fwrite(STDERR, "\033[01;33mWARNING: multiple REGEXP matches " .
-               "['$regexp', '$text']\033[0m\n");
+        fwrite(STDERR, "\033[01;33mWARNING: multiple REGEXP matches "
+                       . "['$regexp', '$text']\033[0m\n");
       }
 
-      usleep($delay_us);
       $function($base_url, $href, $matches[1]);
+      usleep($delay_us);
     }
   }
 }
@@ -176,8 +100,8 @@ function parse_day($base_url, $href, $match)
   else if (array_key_exists($href, $fixed_day_hrefs))
   {
     $new_href = $fixed_day_hrefs[$href];
-    fwrite(STDERR, "\033[01;32mNOTICE: replacing page URL ['$href', " .
-                   "'$new_href']\033[0m\n");
+    fwrite(STDERR, "\033[01;32mNOTICE: replacing page URL ['$href', "
+                   . "'$new_href']\033[0m\n");
 
     $href = $new_href;
   }
@@ -189,12 +113,12 @@ function parse_day($base_url, $href, $match)
       return;
     }
 
-    parse_www_europe1_fr($href);
+    parse_podcast_page($href);
   }
   else
   {
-    fwrite(STDERR, "\033[01;33mWARNING: source not supported " .
-                   "['$href']\033[0m\n");
+    fwrite(STDERR, "\033[01;33mWARNING: source not supported "
+                   . "['$href']\033[0m\n");
   }
 }
 
@@ -226,16 +150,6 @@ function parse_root($base_url, $href)
 }
 
 /******************************************************************************/
-
-if (!file_exists("output/www_europe1_fr/pages"))
-{
-  mkdir("output/www_europe1_fr/pages/", 0755, true);
-}
-
-if (!file_exists("output/www_europe1_fr/mp3s"))
-{
-  mkdir("output/www_europe1_fr/mp3s/", 0755, true);
-}
 
 parse_root($root_url, "");
 
