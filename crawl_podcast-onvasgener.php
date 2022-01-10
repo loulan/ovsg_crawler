@@ -4,6 +4,12 @@
 include("global.php");
 
 $root_output_dir = "output_podcast-onvasgener";
+$full_pages_dir = "$root_output_dir/europe1/full/pages";
+$full_mp3s_dir = "$root_output_dir/europe1/full/mp3s";
+$no_mp3_url_pages_dir = "$root_output_dir/full/no_mp3_url_pages";
+$no_mp3_pages_dir = "$root_output_dir/full/no_mp3_pages";
+$excerpts_pages_dir = "$root_output_dir/europe1/excerpts/pages";
+$excerpts_mp3s_dir = "$root_output_dir/europe1/excerpts/mp3s";
 
 $root_url = "http://www.podcast-onvasgener.fr/";
 $ignored_day_hrefs = array(

@@ -2,14 +2,34 @@
 
 if (!$dry_run)
 {
-  if (!file_exists("$root_output_dir/www_europe1_fr/pages"))
+  if (!file_exists($full_pages_dir))
   {
-    mkdir("$root_output_dir/www_europe1_fr/pages/", 0755, true);
+    mkdir($full_pages_dir, 0755, true);
   }
 
-  if (!file_exists("$root_output_dir/europe1/mp3s"))
+  if (!file_exists($full_mp3s_dir))
   {
-    mkdir("$root_output_dir/europe1/mp3s/", 0755, true);
+    mkdir($full_mp3s_dir, 0755, true);
+  }
+
+  if (!file_exists($no_mp3_url_pages_dir))
+  {
+    mkdir($no_mp3_url_pages_dir, 0755, true);
+  }
+
+  if (!file_exists($no_mp3_pages_dir))
+  {
+    mkdir($no_mp3_pages_dir, 0755, true);
+  }
+
+  if (!file_exists($excerpts_pages_dir))
+  {
+    mkdir($excerpts_pages_dir, 0755, true);
+  }
+
+  if (!file_exists($excerpts_mp3s_dir))
+  {
+    mkdir($excerpts_mp3s_dir, 0755, true);
   }
 }
 

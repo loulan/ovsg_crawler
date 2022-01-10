@@ -1,6 +1,6 @@
 <?php
 
-$dry_run = true;
-$delay_us = 100000;
+$dry_run = false;
+$delay_us = 5000000;
 
 ?>

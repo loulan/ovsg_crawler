@@ -4,6 +4,12 @@
 include("global.php");
 
 $root_output_dir = "output_europe1";
+$full_pages_dir = "$root_output_dir/full/pages";
+$full_mp3s_dir = "$root_output_dir/full/mp3s";
+$no_mp3_url_pages_dir = "$root_output_dir/full/no_mp3_url_pages";
+$no_mp3_pages_dir = "$root_output_dir/full/no_mp3_pages";
+$excerpts_pages_dir = "$root_output_dir/excerpts/pages";
+$excerpts_mp3s_dir = "$root_output_dir/excerpts/mp3s";
 
 $root_url = "https://www.europe1.fr/emissions/On-va-s-gener";
 
